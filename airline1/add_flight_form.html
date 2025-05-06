@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Flight Details - Airline Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1e3a8a;
+            box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn {
+            background-color: #1e3a8a;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background-color: #1e40af;
+        }
+
+        .cancel-btn {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .cancel-btn:hover {
+            background-color: #d1d5db;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .navigation a {
+            color: #1e3a8a;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #34d399;
+        }
+
+        .error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #f87171;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Add Flight Details</h1>
+            <p class="subtitle">Enter complete flight information below</p>
+        </div>
+
+        <div id="success-message" class="message success"></div>
+        <div id="error-message" class="message error"></div>
+
+        <form id="flightForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="airline">Airline Name*</label>
+                    <input type="text" id="airline" name="Name" required placeholder="e.g. Emirates Airlines">
+                </div>
+
+                <div class="form-group">
+                    <label for="flight">Flight Number*</label>
+                    <input type="text" id="flight" name="Flight" required placeholder="e.g. EK451">
+                </div>
+
+                <div class="form-group">
+                    <label for="aircraft">Aircraft Model*</label>
+                    <input type="text" id="aircraft" name="AirplaneModel" required placeholder="e.g. Boeing 777-300ER">
+                </div>
+
+                <div class="form-group">
+                    <label for="manufacturer">Manufacturer*</label>
+                    <input type="text" id="manufacturer" name="Manufacturer" required placeholder="e.g. Boeing">
+                </div>
+
+                <div class="form-group">
+                    <label for="departure">Departure Date*</label>
+                    <input type="date" id="departure" name="DepartureDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="arrival">Arrival Time*</label>
+                    <input type="time" id="arrival" name="ArrivalTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="from">From Location*</label>
+                    <input type="text" id="from" name="FromLocation" required placeholder="e.g. Dubai (DXB)">
+                </div>
+
+                <div class="form-group">
+                    <label for="to">To Location*</label>
+                    <input type="text" id="to" name="ToLocation" required placeholder="e.g. London (LHR)">
+                </div>
+
+                <div class="form-group">
+                    <label for="pilot">Pilot Name*</label>
+                    <input type="text" id="pilot" name="PilotName" required placeholder="e.g. Capt. John Smith">
+                </div>
+
+                <div class="form-group">
+                    <label for="crew">Cabin Crew*</label>
+                    <input type="text" id="crew" name="CabinCrew" required placeholder="e.g. 12 members">
+                </div>
+
+                <div class="form-group">
+                    <label for="passengers">Number of Passengers*</label>
+                    <input type="number" id="passengers" name="Passengers" required min="0" placeholder="e.g. 280">
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Flight Status*</label>
+                    <select id="status" name="Status" required>
+                        <option value="">Select Status</option>
+                        <option value="On Time">On Time</option>
+                        <option value="Delayed">Delayed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="window.location.href='dashboard.html'">Cancel</button>
+                <button type="submit" class="submit-btn">Add Flight</button>
+            </div>
+        </form>
+
+        <div class="navigation">
+            <a href="dashboard.html">View Dashboard</a> |
+            <a href="index.html">Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('flightForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+
+            fetch('add_flight.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    successMessage.textContent = 'Flight added successfully!';
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    // Reset form
+                    document.getElementById('flightForm').reset();
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    errorMessage.textContent = data.message || 'Error adding flight. Please try again.';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                errorMessage.textContent = 'Error connecting to server. Please try again.';
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html> 

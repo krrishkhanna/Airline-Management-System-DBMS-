@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Statistics - Airline Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stats-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card h2 {
+            font-size: 18px;
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-change {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .arrow {
+            color: #6b7280;
+        }
+
+        .old-status {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .navigation a {
+            color: #1e3a8a;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #1e3a8a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Flight Statistics</h1>
+            <p class="subtitle">View airline performance and status changes</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stats-card">
+                <h2>Airline Performance Summary</h2>
+                <div id="performance-table" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Airline</th>
+                                <th>Total Flights</th>
+                                <th>Total Passengers</th>
+                                <th>Avg. Passengers</th>
+                                <th>On-Time %</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performance-body">
+                            <!-- Performance data will be populated here -->
+                        </tbody>
+                    </table>
+                    <div id="performance-loader" class="loader">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h2>Recent Status Changes</h2>
+                <div id="logs-table" class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Flight Number</th>
+                                <th>Status Change</th>
+                                <th>Change Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-body">
+                            <!-- Log data will be populated here -->
+                        </tbody>
+                    </table>
+                    <div id="logs-loader" class="loader">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <a href="dashboard.html">Dashboard</a> |
+            <a href="add_flight_form.html">Add Flight</a> |
+            <a href="index.html">Home</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchPerformanceData();
+            fetchLogData();
+        });
+
+        function fetchPerformanceData() {
+            const tableBody = document.getElementById('performance-body');
+            const loader = document.getElementById('performance-loader');
+
+            fetch('flight_cursor.php')
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    if (data.success) {
+                        tableBody.innerHTML = data.data.map(airline => `
+                            <tr>
+                                <td>${airline.airline_name}</td>
+                                <td>${airline.total_flights}</td>
+                                <td>${airline.total_passengers}</td>
+                                <td>${airline.avg_passengers}</td>
+                                <td>${airline.on_time_percentage}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #ef4444;">
+                                Error loading performance data: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        function fetchLogData() {
+            const tableBody = document.getElementById('logs-body');
+            const loader = document.getElementById('logs-loader');
+
+            fetch('get_logs.php')
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    if (data.success) {
+                        tableBody.innerHTML = data.data.map(log => `
+                            <tr>
+                                <td>${log.flight_number}</td>
+                                <td class="status-change">
+                                    <span class="old-status">${log.old_status}</span>
+                                    <span class="arrow">→</span>
+                                    <span class="status">${log.new_status}</span>
+                                </td>
+                                <td>${new Date(log.change_date).toLocaleString()}</td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        throw new Error(data.message);
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #ef4444;">
+                                Error loading log data: ${error.message}
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airline Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .button {
+            background-color: #ffffff;
+            color: #1e3a8a;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #ffffff;
+            font-size: 14px;
+        }
+        
+        .button:hover {
+            background-color: transparent;
+            color: #ffffff;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card h3 {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card p {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+        
+        .filters {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+        }
+        
+        .filter-box {
+            min-width: 150px;
+        }
+        
+        .filter-box select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+        
+        .table-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        .status-on-time {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-delayed {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #1e3a8a;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        .error-message {
+            color: #b91c1c;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+        
+        .view-btn {
+            background-color: #3b82f6;
+        }
+        
+        .edit-btn {
+            background-color: #10b981;
+        }
+        
+        .delete-btn {
+            background-color: #ef4444;
+        }
+        
+        .airline-logo {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .airline-cell {
+            display: flex;
+            align-items: center;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+            
+            .responsive-table {
+                overflow-x: auto;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box, .filter-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>Airline Management System</h1>
+                <p>Flight Dashboard</p>
+            </div>
+            <div class="header-actions">
+                <a href="add_flight_form.html" class="button">Add Flight</a>
+                <a href="index.html" class="button">Home</a>
+            </div>
+        </header>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Flights</h3>
+                <p id="total-flights">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>On Time</h3>
+                <p id="on-time-flights">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Delayed</h3>
+                <p id="delayed-flights">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Cancelled</h3>
+                <p id="cancelled-flights">0</p>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search by airline, flight, from, to...">
+            </div>
+            <div class="filter-box">
+                <select id="status-filter">
+                    <option value="all">All Statuses</option>
+                    <option value="On Time">On Time</option>
+                    <option value="Delayed">Delayed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <div class="responsive-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Airline</th>
+                            <th>Flight</th>
+                            <th>Aircraft</th>
+                            <th>Departure</th>
+                            <th>Arrival</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Pilot</th>
+                            <th>Crew</th>
+                            <th>Passengers</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="flights-table-body">
+                        <!-- Flight data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="loader" class="loader">
+                <div class="spinner"></div>
+            </div>
+            <div id="error-message" class="error-message" style="display: none;">
+                Error loading flight data. Please try again later.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchFlightData();
+            
+            // Add event listeners for search and filter
+            document.getElementById('search-input').addEventListener('input', debounce(fetchFlightData, 500));
+            document.getElementById('status-filter').addEventListener('change', fetchFlightData);
+        });
+        
+        // Debounce function to limit API calls
+        function debounce(func, wait) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
+        }
+
+        function fetchFlightData() {
+            const tableBody = document.getElementById('flights-table-body');
+            const loader = document.getElementById('loader');
+            const errorMessage = document.getElementById('error-message');
+            const searchInput = document.getElementById('search-input').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            // Hide table body and show loader
+            tableBody.style.display = 'none';
+            loader.style.display = 'flex';
+            errorMessage.style.display = 'none';
+            
+            // IMPORTANT: The fetch URL below must match the location of fetch_data.php on your server.
+            // If you see connection errors, try opening fetch_data.php directly in your browser to debug.
+            let url = 'fetch_data.php';
+            const params = new URLSearchParams();
+            
+            if (searchInput) {
+                params.append('search', searchInput);
+            }
+            
+            if (statusFilter && statusFilter !== 'all') {
+                params.append('status', statusFilter);
+            }
+            
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loader
+                    loader.style.display = 'none';
+                    
+                    if (data.error) {
+                        // Show error message
+                        errorMessage.textContent = data.message || 'Error loading flight data';
+                        errorMessage.style.display = 'block';
+                        return;
+                    }
+                    
+                    // Show table body
+                    tableBody.style.display = '';
+                    
+                    // Update stats
+                    document.getElementById('total-flights').textContent = data.count;
+                    
+                    let onTimeCount = 0;
+                    let delayedCount = 0;
+                    let cancelledCount = 0;
+                    
+                    // Clear existing rows
+                    tableBody.innerHTML = '';
+                    
+                    // Add new rows
+                    data.data.forEach(flight => {
+                        // Count status types
+                        if (flight.Status === 'On Time') onTimeCount++;
+                        else if (flight.Status === 'Delayed') delayedCount++;
+                        else if (flight.Status === 'Cancelled') cancelledCount++;
+                        
+                        // Create row
+                        const row = document.createElement('tr');
+                        
+                        // Create status class
+                        let statusClass = '';
+                        if (flight.Status === 'On Time') statusClass = 'status-on-time';
+                        else if (flight.Status === 'Delayed') statusClass = 'status-delayed';
+                        else if (flight.Status === 'Cancelled') statusClass = 'status-cancelled';
+                        
+                        // Format date
+                        const date = new Date(flight.DepartureDate);
+                        const formattedDate = date.toLocaleDateString('en-IN', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                        });
+                        
+                        // Format time
+                        const time = flight.ArrivalTime.split(':');
+                        const formattedTime = `${time[0]}:${time[1]}`;
+                        
+                        // Get airline logo based on airline name
+                        let logoUrl = 'https://via.placeholder.com/30';
+                        if (flight.Name.includes('Air India')) {
+                            logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/0/0c/Air_India_logo.svg/1200px-Air_India_logo.svg.png';
+                        } else if (flight.Name.includes('IndiGo')) {
+                            logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/IndiGo_logo.svg/1200px-IndiGo_logo.svg.png';
+                        } else if (flight.Name.includes('Vistara')) {
+                            logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Vistara_logo.svg/1200px-Vistara_logo.svg.png';
+                        } else if (flight.Name.includes('SpiceJet')) {
+                            logoUrl = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/SpiceJet_logo.svg/1200px-SpiceJet_logo.svg.png';
+                        }
+                        
+                        // Set row HTML
+                        row.innerHTML = `
+                            <td>${flight.id}</td>
+                            <td class="airline-cell">
+                                <img src="${logoUrl}" alt="${flight.Name}" class="airline-logo">
+                                ${flight.Name}
+                            </td>
+                            <td>${flight.Flight}</td>
+                            <td>${flight.AirplaneModel}</td>
+                            <td>${formattedDate}</td>
+                            <td>${formattedTime}</td>
+                            <td>${flight.FromLocation}</td>
+                            <td>${flight.ToLocation}</td>
+                            <td>${flight.PilotName}</td>
+                            <td>${flight.CabinCrew}</td>
+                            <td>${flight.Passengers}</td>
+                            <td><span class="status ${statusClass}">${flight.Status}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn view-btn" onclick="viewFlight(${flight.id})">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="action-btn edit-btn" onclick="editFlight(${flight.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete-btn" onclick="deleteFlight(${flight.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        
+                        tableBody.appendChild(row);
+                    });
+                    
+                    // Update stats
+                    document.getElementById('on-time-flights').textContent = onTimeCount;
+                    document.getElementById('delayed-flights').textContent = delayedCount;
+                    document.getElementById('cancelled-flights').textContent = cancelledCount;
+                })
+                .catch(error => {
+                    // Hide loader
+                    loader.style.display = 'none';
+                    
+                    // Show error message
+                    errorMessage.textContent = 'Error connecting to the server. Please try again later.';
+                    errorMessage.style.display = 'block';
+                    console.error('Error fetching data:', error);
+                });
+        }
+        
+        // Placeholder functions for action buttons
+        function viewFlight(id) {
+            alert(`View flight details for ID: ${id}`);
+            // In a real application, this would navigate to a details page
+        }
+        
+        function editFlight(id) {
+            alert(`Edit flight with ID: ${id}`);
+            // In a real application, this would navigate to an edit form
+        }
+        
+        function deleteFlight(id) {
+            if (confirm(`Are you sure you want to delete flight with ID: ${id}?`)) {
+                alert(`Flight with ID: ${id} has been deleted.`);
+                // In a real application, this would send a DELETE request to the server
+                fetchFlightData(); // Refresh the table
+            }
+        }
+    </script>
+</body>
+</html> 
